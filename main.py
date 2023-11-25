@@ -7,8 +7,17 @@ import uvicorn
 import requests
 from pymongo import MongoClient
 
-# port 8000
+from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
+origins = ["*"]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 current_date = date.today()
 date_year = current_date - timedelta(days=365)
 
@@ -26,32 +35,46 @@ def recharge_data(documents):
     print(data)
     json_data = json.dumps(data)
     print(json_data)
-    return json_data
+    return data
 
 
 @app.get("/forecast/gold")
 def forecast_gold():
     print("Forecast gold")
-    # collection = db['forecastGold']
-    # documents = collection.find()
-    # return recharge_data(documents)
-    return {"mess": "gg"}
+    collection = db['forecastGold']
+    documents = collection.find()
+    return recharge_data(documents)
+    #return {"mess": "gg"}
 
 
 @app.get("/forecast/brent")
 def forecast_brent():
-    print("")
+    print("Forecast oil ")
     collection = db['forecastBrent']
     documents = collection.find()
     return recharge_data(documents)
 
 
 @app.get("/forecast/cuprum")
-def forecast_sber():
+def forecast_cuprum():
+    print("Forecast cuprum ")
     collection = db['forecastCuprum']
     documents = collection.find()
     return recharge_data(documents)
 
+@app.get("/forecast/dollar")
+def forecast_dollar():
+    print("Forecast dollar ")
+    collection = db['forecastDollar']
+    documents = collection.find()
+    return recharge_data(documents)
+
+@app.get("/forecast/imoex")
+def forecast_imoex():
+    print("Forecast imoex ")
+    collection = db['forecastImoex']
+    documents = collection.find()
+    return recharge_data(documents)
 
 def main():
     print("Today = ", current_date)
